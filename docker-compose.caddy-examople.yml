@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # The DNS Tunnel Server
+  dnstt:
+    build: .
+    container_name: dnstt-server
+    restart: unless-stopped
+    environment:
+      # REPLACE with your actual NS subdomain (e.g., t.example.com)
+      - NS_SUBDOMAIN=t.example.com
+      
+      # Optional: MTU size (default 1232)
+      - MTU_VALUE=1232
+    volumes:
+      # Persist keys so they don't change on restart
+      - ./dnstt-data:/etc/dnstt
+    ports:
+      # Map standard DNS port 53 on host to 5300 inside container
+      - "53:5300/udp"
+      
+      # Optional: Expose SOCKS proxy externally if needed
+      # - "1080:1080" 
+    networks:
+      - dnstt-net
+
+  # Caddy Reverse Proxy (For DoH/HTTPS)
+  caddy:
+    image: caddy:latest
+    container_name: dnstt-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Mount the Caddyfile configuration
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      # Persist SSL certificates
+      - caddy_data:/data
+    depends_on:
+      - dnstt
+    networks:
+      - dnstt-net
+
+networks:
+  dnstt-net:
+
+volumes:
+  caddy_data:
