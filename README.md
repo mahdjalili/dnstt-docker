@@ -1,4 +1,4 @@
-# dnstt-docker-lite
+# dnstt-docker
 
 > A lightweight and container-native Docker implementation for the **dnstt** (DNS Tunnel) server.
 
@@ -47,7 +47,7 @@ version: '3.8'
 
 services:
   dnstt:
-    image: dnstt-docker-lite:latest
+    image: docker pull ghcr.io/mahdjalili/dnstt-docker
     build: .
     container_name: dnstt-server
     restart: unless-stopped

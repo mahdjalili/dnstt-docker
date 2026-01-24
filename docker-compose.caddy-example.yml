@@ -3,6 +3,7 @@ version: '3.8'
 services:
   # The DNS Tunnel Server
   dnstt:
+    image: ghcr.io/mahdjalili/dnstt-docker:main
     build: .
     container_name: dnstt-server
     restart: unless-stopped
